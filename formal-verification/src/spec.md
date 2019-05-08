@@ -3,6 +3,7 @@ Table of Contents
 
 * [Contract ERC1077](#high-level-specification-of-the-contract-erc1077)
     * [setRequiredSignatures](#setRequiredSignatures)
+    * [refund](#refund)
 * [Contract KeyHolder](#high-level-specification-of-the-contract-keyholder)
     * [removeKey](#removeKey)
     * [addKey](#addKey)
@@ -46,6 +47,30 @@ iff
 
 ```
 
+## refund
+
+- Solidity source of the function: [refund](https://github.com/UniversalLogin/UniversalLoginSDK/blob/master/universal-login-contracts/contracts/ERC1077.sol#L131)
+
+- ACT semantics:
+
+```act
+behaviour refund of ERC1077
+interface refund(uint256 _gasUsed, uint _gasPrice, address _gasToken)
+
+types
+
+    Y : uint256
+
+storage
+
+    #keyCount |-> Y => Y
+
+iff
+
+    VCallValue == 0
+    _gasToken =/= 0
+
+```
 
 # High-level specification of the contract KeyHolder
 

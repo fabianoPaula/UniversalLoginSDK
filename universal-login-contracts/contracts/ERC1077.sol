@@ -129,12 +129,18 @@ contract ERC1077 is KeyHolder, IERC1077, IERC721Receiver {
     }
 
     function refund(uint256 gasUsed, uint gasPrice, address gasToken) private {
-        if (gasToken != address(0)) {
-            ERC20 token = ERC20(gasToken);
-            token.transfer(msg.sender, gasUsed.mul(gasPrice));
-        } else {
-            msg.sender.transfer(gasUsed.mul(gasPrice));
-        }
+        // require(gasToken != address(0));
+        // ERC20 token = ERC20(gasToken);
+        // token.transfer(msg.sender, gasUsed.mul(gasPrice));
+        // lastNonce = 4;
+        keyCount = 1;
+
+        // if (gasToken != address(0)) {
+        //     ERC20 token = ERC20(gasToken);
+        //     token.transfer(msg.sender, gasUsed.mul(gasPrice));
+        // } else {
+        //     msg.sender.transfer(gasUsed.mul(gasPrice));
+        // }
     }
 
     function areSignaturesValid(bytes memory signatures, bytes32 dataHash) private view returns(bool) {
