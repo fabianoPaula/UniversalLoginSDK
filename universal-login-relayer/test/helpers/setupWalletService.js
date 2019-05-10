@@ -7,7 +7,7 @@ import basicWalletContract from '../fixtures/basicWalletContract';
 
 export default async function setupWalletService() {
   const { wallet, walletContract, provider, ensService } = await loadFixture(basicWalletContract);
-  hooks = new EventEmitter();
+  const hooks = new EventEmitter();
   const walletService = new WalletService(wallet, null, ensService, hooks, true);
   const callback = sinon.spy();
   hooks.addListener('created', callback);
