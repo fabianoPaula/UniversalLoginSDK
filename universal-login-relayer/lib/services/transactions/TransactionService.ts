@@ -6,13 +6,13 @@ import WalletContract from '@universal-login/contracts/build/Wallet.json';
 import {hasEnoughToken, isAddKeyCall, getKeyFromData, isAddKeysCall, getRequiredSignatures} from '../../utils/utils';
 import AuthorisationService from '../authorisationService';
 import TransactionQueueService from './TransactionQueueService';
-import PendingExecutionStore from './PendingExecutionStore';
+import PendingExecutions from './PendingExecutions';
 
 class TransactionService {
-  protected executionStore: PendingExecutionStore;
+  protected executionStore: PendingExecutions;
 
   constructor(private wallet: Wallet, private authorisationService: AuthorisationService, private hooks: EventEmitter, private provider: providers.Provider, private transactionQueue: TransactionQueueService) {
-    this.executionStore = new PendingExecutionStore(wallet);
+    this.executionStore = new PendingExecutions(wallet);
   }
 
   start() {

@@ -1,4 +1,4 @@
-import PendingExecutionStore from '../../../lib/services/transactions/PendingExecutionStore';
+import PendingExecutions from '../../../lib/services/transactions/PendingExecutions';
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { Message } from '@universal-login/commons';
@@ -17,12 +17,12 @@ const getMessageWith = async (from: string, privateKey : string) => {
 };
 
 describe('PendingExecutionStore', () => {
-  let store : PendingExecutionStore;
+  let store : PendingExecutions;
   let message : Message;
 
   beforeEach(async () => {
     const { wallet, walletContract } = await loadFixture(basicWalletContractWithMockToken);
-    store = new PendingExecutionStore(wallet);
+    store = new PendingExecutions(wallet);
     message = await getMessageWith(walletContract.address, wallet.privateKey);
     await walletContract.setRequiredSignatures(2);
   });

@@ -3,7 +3,7 @@ import { Message } from '@universal-login/commons';
 import {calculateMessageHash} from '@universal-login/contracts';
 import { Wallet } from 'ethers';
 
-export default class PendingExecutionStore {
+export default class PendingExecutions {
   public executions: Record<string, PendingExecution>;
 
   constructor(private wallet : Wallet) {
