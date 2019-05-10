@@ -9,10 +9,10 @@ import TransactionQueueService from './TransactionQueueService';
 import PendingExecutions from './PendingExecutions';
 
 class TransactionService {
-  protected executionStore: PendingExecutions;
+  protected pendingExecutions: PendingExecutions;
 
   constructor(private wallet: Wallet, private authorisationService: AuthorisationService, private hooks: EventEmitter, private provider: providers.Provider, private transactionQueue: TransactionQueueService) {
-    this.executionStore = new PendingExecutions(wallet);
+    this.pendingExecutions = new PendingExecutions(wallet);
   }
 
   start() {
@@ -23,15 +23,15 @@ class TransactionService {
     const requiredSignatures = await getRequiredSignatures(message.from, this.wallet);
     if (requiredSignatures > 1) {
       const hash = await calculateMessageHash(message);
-      if (this.executionStore.isPresent(hash)) {
-        await this.executionStore.add(message);
-        if (this.executionStore.get(hash).canExecute()) {
+      if (this.pendingExecutions.isPresent(hash)) {
+        await this.pendingExecutions.add(message);
+        if (this.pendingExecutions.get(hash).canExecute()) {
           return this.executePending(hash, message);
         }
-        return JSON.stringify(this.executionStore.getStatus(hash));
+        return JSON.stringify(this.pendingExecutions.getStatus(hash));
       } else {
-        const hash = await this.executionStore.add(message);
-        return JSON.stringify(await this.executionStore.getStatus(hash));
+        const hash = await this.pendingExecutions.add(message);
+        return JSON.stringify(await this.pendingExecutions.getStatus(hash));
       }
     } else {
       return this.execute(message);
@@ -39,9 +39,9 @@ class TransactionService {
   }
 
   private async executePending(hash: string, message: Message) {
-    const finalMessage = {...message, signature: this.executionStore.get(hash).getConcatenatedSignatures()};
+    const finalMessage = {...message, signature: this.pendingExecutions.get(hash).getConcatenatedSignatures()};
     const transaction: any = await this.execute(finalMessage);
-    await this.executionStore.get(hash).confirmExecution(transaction.hash);
+    await this.pendingExecutions.get(hash).confirmExecution(transaction.hash);
     return transaction;
   }
 
@@ -75,7 +75,7 @@ class TransactionService {
   }
 
   async getStatus(hash: string) {
-    return this.executionStore.getStatus(hash);
+    return this.pendingExecutions.getStatus(hash);
   }
 
   stop() {
