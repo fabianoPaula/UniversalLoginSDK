@@ -22,17 +22,12 @@ class TransactionService {
   async executeSigned(message: Message) {
     const requiredSignatures = await getRequiredSignatures(message.from, this.wallet);
     if (requiredSignatures > 1) {
-      const hash = await calculateMessageHash(message);
-      if (this.pendingExecutions.isPresent(hash)) {
-        await this.pendingExecutions.add(message);
-        if (this.pendingExecutions.get(hash).canExecute()) {
-          return this.executePending(hash, message);
-        }
-        return JSON.stringify(this.pendingExecutions.getStatus(hash));
-      } else {
-        const hash = await this.pendingExecutions.add(message);
-        return JSON.stringify(await this.pendingExecutions.getStatus(hash));
+      const hash = await this.pendingExecutions.add(message);
+      const numberOfSignatures = (await this.pendingExecutions.getStatus(hash)).collectedSignatures.length;
+      if (await this.pendingExecutions.get(hash).canExecute() && numberOfSignatures !== 1) {
+        return this.executePending(hash, message);
       }
+      return JSON.stringify(this.pendingExecutions.getStatus(hash));
     } else {
       return this.execute(message);
     }
