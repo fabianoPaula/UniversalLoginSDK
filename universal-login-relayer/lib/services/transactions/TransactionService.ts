@@ -23,7 +23,7 @@ class TransactionService {
     if (requiredSignatures > 1) {
       const hash = await this.pendingExecutions.add(message);
       const numberOfSignatures = (await this.pendingExecutions.getStatus(hash)).collectedSignatures.length;
-      if (await this.pendingExecutions.get(hash).canExecute() && numberOfSignatures !== 1) {
+      if (await this.pendingExecutions.isEnoughSignatures(hash) && numberOfSignatures !== 1) {
         return this.executePending(hash, message);
       }
       return JSON.stringify(this.pendingExecutions.getStatus(hash));

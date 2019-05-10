@@ -46,7 +46,7 @@ export default class PendingExecution {
     this.collectedSignatures.push({signature: msg.signature, key});
   }
 
-  async canExecute() {
+  async isEnoughSignatures() {
     const requiredSignatures = await this.walletContract.requiredSignatures();
     return this.collectedSignatures.length >= requiredSignatures;
   }
@@ -56,7 +56,7 @@ export default class PendingExecution {
       throw 'Invalid Tx';
     } else if (this.transactionHash !== '0x0') {
       throw 'Transaction has already been confirmed';
-    } else if (!(await this.canExecute())) {
+    } else if (!(await this.isEnoughSignatures())) {
         throw 'Not enough signatures';
     }
     this.transactionHash = tx;

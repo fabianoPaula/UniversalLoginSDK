@@ -14,6 +14,12 @@ export default class PendingExecutions {
     return messageHash in this.executions;
   }
 
+  private throwIfNotPresent(hash: string) {
+    if (!this.isPresent(hash)) {
+      throw 'Unable to find execution with given message hash';
+    }
+  }
+
   async add(message: Message) : Promise<string> {
     const hash = calculateMessageHash(message);
     if (!this.isPresent(hash)) {
@@ -28,10 +34,21 @@ export default class PendingExecutions {
   }
 
   async getStatus(hash: string) {
-    if (!this.isPresent(hash)) {
-      throw 'Unable to find execution with given message hash';
-    }
+    this.throwIfNotPresent(hash);
     return this.executions[hash].getStatus();
+  }
+
+  async getConcatenatedSignatures(hash: string) : Promise<string> {
+    return  '';
+  }
+
+  async confirmExecution(hash: string) {
+
+  }
+
+  async isEnoughSignatures(hash: string) : Promise<boolean> {
+    this.throwIfNotPresent(hash);
+    return this.executions[hash].isEnoughSignatures();
   }
 
   get(hash: string) {

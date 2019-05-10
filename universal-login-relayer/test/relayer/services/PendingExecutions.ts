@@ -19,9 +19,10 @@ describe('PendingExecutionStore', () => {
   let message : Message;
   let wallet: Wallet;
   let walletContract: Contract;
+  let actionKey: string;
 
   beforeEach(async () => {
-    ({ wallet, walletContract } = await loadFixture(basicWalletContractWithMockToken));
+    ({ wallet, walletContract, actionKey } = await loadFixture(basicWalletContractWithMockToken));
     store = new PendingExecutions(wallet);
     message = await getMessageWith(walletContract.address, wallet.privateKey);
     await walletContract.setRequiredSignatures(2);
@@ -42,7 +43,6 @@ describe('PendingExecutionStore', () => {
   });
 
   it('should sign message', async () => {
-    const { actionKey } = await loadFixture(basicWalletContractWithMockToken);
     const signature1 = await calculateMessageSignature(wallet.privateKey, message);
     const signature2 = await calculateMessageSignature(actionKey, message);
     const hash1 = await store.add({...message, signature: signature1});
@@ -50,6 +50,15 @@ describe('PendingExecutionStore', () => {
     expect(hash1).to.be.equal(hash2);
     const collectedSignatures = (await store.getStatus(hash1)).collectedSignatures;
     expect(collectedSignatures).to.be.deep.equal([signature1, signature2]);
+  });
+
+  it('should check if execution is ready to execute', async () => {
+    const signature1 = await calculateMessageSignature(wallet.privateKey, message);
+    const signature2 = await calculateMessageSignature(actionKey, message);
+    const hash1 = await store.add({...message, signature: signature1});
+    expect(await store.isEnoughSignatures(hash1)).to.eq(false);
+    const hash2 = await store.add({...message, signature: signature2});
+    expect(await store.isEnoughSignatures(hash2)).to.eq(true);
   });
 
   it('should get added signed transaction', async () => {
