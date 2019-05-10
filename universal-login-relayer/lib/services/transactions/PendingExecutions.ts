@@ -38,8 +38,8 @@ export default class PendingExecutions {
     return this.executions[hash].getStatus();
   }
 
-  async getConcatenatedSignatures(hash: string) : Promise<string> {
-    return  '';
+  getMessageWithSignatures(message: Message, hash: string) : Message {
+    return  { ...message, signature: this.executions[hash].getConcatenatedSignatures()};
   }
 
   async confirmExecution(hash: string) {

@@ -33,7 +33,7 @@ class TransactionService {
   }
 
   private async executePending(hash: string, message: Message) {
-    const finalMessage = {...message, signature: this.pendingExecutions.get(hash).getConcatenatedSignatures()};
+    const finalMessage = this.pendingExecutions.getMessageWithSignatures(message, hash);
     const transaction: any = await this.execute(finalMessage);
     await this.pendingExecutions.get(hash).confirmExecution(transaction.hash);
     return transaction;
