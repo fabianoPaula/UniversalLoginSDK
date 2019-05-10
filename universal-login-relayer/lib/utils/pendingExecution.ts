@@ -52,13 +52,12 @@ export default class PendingExecution {
   }
 
   async confirmExecution(tx: string) {
-    const requiredSignatures = await this.walletContract.requiredSignatures();
-    if (requiredSignatures > this.collectedSignatures.length) {
-      throw 'Not enough signatures';
+    if (tx.length !== 66) {
+      throw 'Invalid Tx';
     } else if (this.transactionHash !== '0x0') {
       throw 'Transaction has already been confirmed';
-    } else if (tx.length !== 66) {
-      throw 'Invalid Tx';
+    } else if (!(await this.canExecute())) {
+        throw 'Not enough signatures';
     }
     this.transactionHash = tx;
   }
