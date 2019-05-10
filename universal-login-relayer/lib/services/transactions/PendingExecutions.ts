@@ -37,8 +37,4 @@ export default class PendingExecutions {
   get(hash: string) {
     return this.executions[hash];
   }
-
-  getWallet() : Wallet {
-    return this.wallet;
-  }
 }
