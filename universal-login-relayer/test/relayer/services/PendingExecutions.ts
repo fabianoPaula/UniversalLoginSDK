@@ -1,6 +1,5 @@
 import PendingExecutions from '../../../lib/services/transactions/PendingExecutions';
-import chai, { expect } from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import { expect } from 'chai';
 import { Message } from '@universal-login/commons';
 import { transferMessage } from '../../fixtures/basicWalletContract';
 import { loadFixture } from 'ethereum-waffle';
@@ -8,8 +7,6 @@ import { calculateMessageSignature, calculateMessageHash } from '@universal-logi
 import basicWalletContractWithMockToken from '../../fixtures/basicWalletContractWithMockToken';
 import PendingExecution from '../../../lib/utils/pendingExecution';
 import { Wallet, Contract } from 'ethers';
-
-chai.use(chaiAsPromised);
 
 const getMessageWith = async (from: string, privateKey : string) => {
   const message = { ...transferMessage, signature: '0x', from};
